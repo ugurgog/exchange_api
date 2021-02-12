@@ -24,7 +24,6 @@ import java.util.List;
 
 public abstract class HttpClientConfig implements InitializingBean {
 
-
     private HttpClient client;
     private List<BasicHeader> defaultHeaders = null;
 

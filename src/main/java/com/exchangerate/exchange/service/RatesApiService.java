@@ -31,8 +31,8 @@ public class RatesApiService implements IExchangeRateService {
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private RatesProperties properties;
-    private IHttpClient httpClient;
+    private final RatesProperties properties;
+    private final IHttpClient httpClient;
     private IExchangeDBService exchangeDBService;
 
     @Autowired
@@ -162,13 +162,5 @@ public class RatesApiService implements IExchangeRateService {
 
         exchangeDBService.update(savedEntity,response);
         return response;
-    }
-
-    public IHttpClient getHttpClient() {
-        return httpClient;
-    }
-
-    public void setHttpClient(IHttpClient httpClient) {
-        this.httpClient = httpClient;
     }
 }
