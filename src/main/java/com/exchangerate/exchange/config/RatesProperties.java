@@ -5,9 +5,10 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
-@ConfigurationProperties("rates")
+@ConfigurationProperties("fixer")
 public class RatesProperties {
     private String url;
+    private String key;
 
     public String getUrl() {
         return url;
@@ -17,5 +18,11 @@ public class RatesProperties {
         this.url = url;
     }
 
+    public String getKey() {
+        return key;
+    }
 
+    public void setKey(String key) {
+        this.key = key;
+    }
 }

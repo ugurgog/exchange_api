@@ -53,13 +53,18 @@ public class RatesApiService implements IRateService {
             return response;
         }
 
-        String paramData = request.getDate() == null ? "latest" : dateTimeFormatter.format(request.getDate()).concat("/");
-        paramData += request.getFromCurrency().concat("/").concat(request.getToCurrency());
+        /*String paramData = request.getDate() == null ? "latest" : dateTimeFormatter.format(request.getDate()).concat("/");
+        paramData += properties.getKey().concat("/");
+        paramData += request.getFromCurrency().concat("/").concat(request.getToCurrency());*/
 
         try {
             Map<String, String> reqProps = new HashMap<>();
             reqProps.put("Content-Type", "application/json");
             reqProps.put("Accept", "*/*");
+
+            String paramData = "latest".concat("?access_key=").concat(properties.getKey())
+                    .concat("&base=").concat(request.getFromCurrency())
+                    .concat("&symbols=").concat(request.getToCurrency());
 
             RateChannelResponseModel provResponse = httpClient2.get(properties.getUrl(),
                     paramData, reqProps, RateChannelResponseModel.class);

@@ -230,11 +230,12 @@ public class HttpClient2 implements IHttpClient2{
     @Override
     public <T> T get(String url, String params, Map<String, String> reqProps, Class<T> clazz) {
         try (CloseableHttpClient client = getClient()) {
-            String data = processedUrl(params);
+            /*String data = processedUrl(params);
             if (params != null && params.length() > 0) {
                 url = url + data;
-            }
+            }*/
 
+            url = url.concat(params);
             HttpGet get = new HttpGet(url);
             setHeaderProperties(get, reqProps);
             CloseableHttpResponse response = client.execute(get);
