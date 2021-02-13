@@ -33,7 +33,6 @@ public class ExchangeEntity extends BaseEntity {
         this.trxId = trxId;
     }
 
-
     public BigDecimal getCalculatedAmount() {
         return calculatedAmount;
     }

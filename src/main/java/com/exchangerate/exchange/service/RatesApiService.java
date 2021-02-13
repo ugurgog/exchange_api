@@ -38,14 +38,17 @@ public class RatesApiService implements IExchangeRateService {
     @Autowired
     private Gson gson = new Gson();
 
-    public RatesApiService(IHttpClient httpClient, RatesProperties properties) {
+    public RatesApiService(IHttpClient httpClient, RatesProperties properties, IExchangeDBService exchangeDBService) {
         this.httpClient = httpClient;
         this.properties = properties;
+        this.exchangeDBService = exchangeDBService;
     }
 
     @Override
     public ExchangeRateResponseModel getRate(ExchangeRateRequestModel request) {
         ExchangeRateResponseModel response = new ExchangeRateResponseModel();
+
+        LOG.info("::getRate request:{}", gson.toJson(request));
 
         if(isNullOrEmpty(request.getFromCurrency()) || isNullOrEmpty(request.getToCurrency())){
             LOG.error("::getRate invalid request request:{}", gson.toJson(request));
@@ -100,9 +103,9 @@ public class RatesApiService implements IExchangeRateService {
             return response;
         }
 
-        if(request.getTrxDate() == null || CustomUtils.isNullOrEmpty(request.getTrxId())){
+        if(request.getTrxDate() == null && CustomUtils.isNullOrEmpty(request.getTrxId())){
             response.setErrorCode("INVALID_REQUEST");
-            response.setErrorMessage("Transaction date or Transaction id cannot be null!");
+            response.setErrorMessage("Transaction date and Transaction id cannot be null!");
             return response;
         }
 
@@ -136,10 +139,14 @@ public class RatesApiService implements IExchangeRateService {
 
         ExchangeEntity savedEntity = exchangeDBService.save(response);
         if (savedEntity == null) {
+            LOG.error("::calculateRate calculate rate save error response:{}", gson.toJson(response));
             response.setErrorCode("DB_ERROR");
             response.setErrorMessage("Calculated rate model cannot be saved!");
             return response;
         }
+
+        LOG.info("::calculateRate savedEntity:{}", gson.toJson(savedEntity));
+
         ExchangeRateRequestModel exRequest = new ExchangeRateRequestModel();
         exRequest.setDate(request.getDate());
         exRequest.setFromCurrency(request.getFromCurrency());

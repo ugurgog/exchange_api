@@ -22,7 +22,7 @@ public class ApiController {
         this.exchangeRateService = exchangeRateService;
     }
 
-    @GetMapping("/stat")
+    @GetMapping("/status")
     public String stat() {
         return "OK";
     }
@@ -33,7 +33,7 @@ public class ApiController {
         return new RedirectView("swagger-ui/index.html");
     }
 
-    @PostMapping("/rate")
+    @PostMapping("/get-rate")
     public ExchangeRateResponseModel exchangeRate(@RequestBody ExchangeRateRequestModel request) {
         ExchangeRateResponseModel response = exchangeRateService.getRate(request);
         return response;

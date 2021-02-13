@@ -49,13 +49,9 @@ public class ExchangeDBService implements IExchangeDBService {
 
     @Override
     public List<ExchangeEntity> getCalculatedRateList(String trxId, LocalDate date, Pageable pageable) {
-        if(trxId == null || trxId.trim().length() == 0){
-            List<ExchangeEntity> content = exchangeRepositoryService.findByDate(date, pageable).getContent();
-            return content;
-        }else{
-            List<ExchangeEntity> content = exchangeRepositoryService.findByTrxId(trxId, pageable).getContent();
-            return content;
-        }
-
+        if(trxId == null || trxId.trim().length() == 0)
+            return exchangeRepositoryService.findByDate(date, pageable).getContent();
+        else
+            return exchangeRepositoryService.findByTrxId(trxId, pageable).getContent();
     }
 }

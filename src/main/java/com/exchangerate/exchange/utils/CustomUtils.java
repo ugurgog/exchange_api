@@ -13,9 +13,9 @@ public class CustomUtils {
 
     public static boolean isNullOrEmpty(String text) {
         if(text == null || text.isEmpty())
-            return false;
-        else
             return true;
+        else
+            return false;
     }
 
     public static String generateTrxId(){
