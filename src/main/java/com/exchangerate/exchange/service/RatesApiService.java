@@ -30,8 +30,8 @@ public class RatesApiService implements IRateService {
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final RatesProperties properties;
     private final IHttpClient2 httpClient2;
-    private IRateDBService exchangeDBService;
-    private Gson gson = new Gson();
+    private final IRateDBService exchangeDBService;
+    private final Gson gson = new Gson();
 
     public RatesApiService(RatesProperties properties,
                            IRateDBService exchangeDBService, IHttpClient2 httpClient2) {
@@ -53,18 +53,14 @@ public class RatesApiService implements IRateService {
             return response;
         }
 
-        /*String paramData = request.getDate() == null ? "latest" : dateTimeFormatter.format(request.getDate()).concat("/");
+        String paramData = request.getDate() == null ? "latest" : dateTimeFormatter.format(request.getDate()).concat("/");
         paramData += properties.getKey().concat("/");
-        paramData += request.getFromCurrency().concat("/").concat(request.getToCurrency());*/
+        paramData += request.getFromCurrency().concat("/").concat(request.getToCurrency());
 
         try {
             Map<String, String> reqProps = new HashMap<>();
             reqProps.put("Content-Type", "application/json");
             reqProps.put("Accept", "*/*");
-
-            String paramData = "latest".concat("?access_key=").concat(properties.getKey())
-                    .concat("&base=").concat(request.getFromCurrency())
-                    .concat("&symbols=").concat(request.getToCurrency());
 
             RateChannelResponseModel provResponse = httpClient2.get(properties.getUrl(),
                     paramData, reqProps, RateChannelResponseModel.class);

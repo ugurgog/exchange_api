@@ -79,7 +79,7 @@ public class HttpClient2 implements IHttpClient2{
             if (soapAction != null)
                 post.addHeader("SOAPAction", soapAction);
 
-            HttpResponse response = null;
+            HttpResponse response;
             try (CloseableHttpClient httpclient = getClient()) {
                 response = httpclient.execute(post);
                 HttpEntity entity = response.getEntity();
@@ -110,7 +110,7 @@ public class HttpClient2 implements IHttpClient2{
             StringEntity strent = new StringEntity(postData, "UTF-8");
             post.setEntity(strent);
             post.addHeader("Content-Type", "application/json");
-            HttpResponse response = null;
+            HttpResponse response;
             try (CloseableHttpClient httpclient = getClient()) {
                 response = httpclient.execute(post);
                 HttpEntity entity = response.getEntity();
@@ -137,7 +137,7 @@ public class HttpClient2 implements IHttpClient2{
         String content = null;
         try {
             get.addHeader("Content-Type", "application/json");
-            HttpResponse response = null;
+            HttpResponse response;
             try (CloseableHttpClient httpclient = getClient()) {
                 response = httpclient.execute(get);
                 HttpEntity entity = response.getEntity();
@@ -161,7 +161,7 @@ public class HttpClient2 implements IHttpClient2{
         HttpGet get = new HttpGet(url);
         LOG.warn("::getByteArray url:{}", url);
         try {
-            HttpResponse response = null;
+            HttpResponse response;
             try (CloseableHttpClient httpclient = getClient()) {
                 response = httpclient.execute(get);
                 HttpEntity entity = response.getEntity();
@@ -193,14 +193,12 @@ public class HttpClient2 implements IHttpClient2{
         builder.add(new RequestContent());
         builder.add(new RequestClientConnControl());
         if (defaultHeaders != null && !defaultHeaders.isEmpty()) {
-            List<Header> headers = new ArrayList<Header>(defaultHeaders.size());
-            for (Header header : defaultHeaders) {
-                headers.add(header);
-            }
+            List<Header> headers = new ArrayList<>(defaultHeaders.size());
+            headers.addAll(defaultHeaders);
             builder.add(new RequestDefaultHeaders(headers));
         }
         HttpProcessor processor = builder.build();
-        SSLConnectionSocketFactory socketFactory = null;
+        SSLConnectionSocketFactory socketFactory ;
         socketFactory = SSLConnectionSocketFactory.getSocketFactory();
         Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.getSocketFactory()).register("https", socketFactory)
@@ -220,22 +218,18 @@ public class HttpClient2 implements IHttpClient2{
     }
 
     private Document parseResponse(InputStream input) throws Exception {
-        try {
-            Document doc = reader.read(input);
-            return doc;
-        } finally {
-        }
+        return reader.read(input);
     }
 
     @Override
     public <T> T get(String url, String params, Map<String, String> reqProps, Class<T> clazz) {
         try (CloseableHttpClient client = getClient()) {
-            /*String data = processedUrl(params);
+            String data = processedUrl(params);
             if (params != null && params.length() > 0) {
                 url = url + data;
-            }*/
+            }
 
-            url = url.concat(params);
+            //url = url.concat(params);
             HttpGet get = new HttpGet(url);
             setHeaderProperties(get, reqProps);
             CloseableHttpResponse response = client.execute(get);
@@ -303,7 +297,7 @@ public class HttpClient2 implements IHttpClient2{
             return null;
         }
         StringBuilder buf = new StringBuilder();
-        String newParams = "{1}?base={2}&symbols={3}";
+        String newParams = "{1}?access_key={1}&base={2}&symbols={3}";
 
         String[] path = data.split("/");
         for (int i = 0; i < path.length; i++) {
