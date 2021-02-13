@@ -66,8 +66,6 @@ public class RatesApiService implements IRateService {
             RateChannelResponseModel provResponse = httpClient2.get(properties.getUrl(),
                     paramData, reqProps, RateChannelResponseModel.class);
 
-            //RateChannelResponseModel provResponse = httpClient.get(properties.getUrl(), paramData, RateChannelResponseModel.class);
-
             if(provResponse == null || CollectionUtils.isEmpty(provResponse.getRates())){
                 LOG.error("::getRate RateChannelResponseModel error request:{}, provResponse:{}",
                         gson.toJson(request), gson.toJson(provResponse));
