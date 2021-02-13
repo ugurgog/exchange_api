@@ -1,17 +1,23 @@
-package com.exchangerate.exchange.service;
+package com.exchangerate.exchange.service.impl;
 
 import com.exchangerate.exchange.config.RatesProperties;
 import com.exchangerate.exchange.entity.ExchangeEntity;
 import com.exchangerate.exchange.model.*;
+import com.exchangerate.exchange.service.IHttpClient;
+import com.exchangerate.exchange.service.IRateDBService;
+import com.exchangerate.exchange.service.IRateService;
 import com.exchangerate.exchange.utils.ConvertUtils;
 import com.exchangerate.exchange.utils.CustomUtils;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -29,15 +35,16 @@ public class RatesApiService implements IRateService {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final RatesProperties properties;
-    private final IHttpClient2 httpClient2;
+
     private final IRateDBService exchangeDBService;
     private final Gson gson = new Gson();
+    private IHttpClient httpClient;
 
     public RatesApiService(RatesProperties properties,
-                           IRateDBService exchangeDBService, IHttpClient2 httpClient2) {
+                           IRateDBService exchangeDBService, IHttpClient httpClient) {
         this.properties = properties;
         this.exchangeDBService = exchangeDBService;
-        this.httpClient2 = httpClient2;
+        this.httpClient = httpClient;
     }
 
     @Override
@@ -62,7 +69,7 @@ public class RatesApiService implements IRateService {
             reqProps.put("Content-Type", "application/json");
             reqProps.put("Accept", "*/*");
 
-            RateChannelResponseModel provResponse = httpClient2.get(properties.getUrl(),
+            RateChannelResponseModel provResponse = httpClient.get(properties.getUrl(),
                     paramData, reqProps, RateChannelResponseModel.class);
 
             if(provResponse == null || CollectionUtils.isEmpty(provResponse.getRates())){
@@ -165,5 +172,13 @@ public class RatesApiService implements IRateService {
 
         exchangeDBService.update(savedEntity,response);
         return response;
+    }
+
+    public IHttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    public void setHttpClient(IHttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 }

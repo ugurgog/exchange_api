@@ -1,4 +1,4 @@
-package com.exchangerate.exchange.service;
+package com.exchangerate.exchange.service.impl;
 
 
 import java.io.ByteArrayOutputStream;
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.exchangerate.exchange.service.IHttpClient;
 import com.google.gson.Gson;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -45,8 +46,10 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
-public class HttpClient2 implements IHttpClient2{
+@Service
+public class HttpClientService implements IHttpClient {
 
     private Gson gson = new Gson();
     private final Logger LOG = LoggerFactory.getLogger(getClass());
@@ -64,7 +67,7 @@ public class HttpClient2 implements IHttpClient2{
 
     private boolean enableCompression = true;
 
-    public HttpClient2() {
+    public HttpClientService() {
     }
 
     @Override
@@ -229,6 +232,8 @@ public class HttpClient2 implements IHttpClient2{
                 url = url + data;
             }
 
+            LOG.info("::httpClient get url:{}", url);
+
             HttpGet get = new HttpGet(url);
             setHeaderProperties(get, reqProps);
             CloseableHttpResponse response = client.execute(get);
@@ -296,7 +301,7 @@ public class HttpClient2 implements IHttpClient2{
             return null;
         }
         StringBuilder buf = new StringBuilder();
-        String newParams = "{1}?access_key={1}&base={2}&symbols={3}";
+        String newParams = "{1}?access_key={2}&base={3}&symbols={4}";
 
         String[] path = data.split("/");
         for (int i = 0; i < path.length; i++) {

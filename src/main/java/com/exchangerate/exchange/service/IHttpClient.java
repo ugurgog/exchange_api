@@ -4,7 +4,7 @@ import org.dom4j.Element;
 
 import java.util.Map;
 
-public interface IHttpClient2 {
+public interface IHttpClient {
 
     Element post(String postData, boolean retry, String serviceUrl, String soapAction);
     String postAsJson(String postData, boolean retry, String serviceUrl);

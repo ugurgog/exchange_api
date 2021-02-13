@@ -6,7 +6,7 @@ import java.time.LocalDate;
 public class ExchangeRateResponseModel extends BaseResponseModel {
 
     private BigDecimal rate;
-    private LocalDate date;
+    private String date;
     private String fromCurrency;
     private String toCurrency;
 
@@ -18,11 +18,11 @@ public class ExchangeRateResponseModel extends BaseResponseModel {
         this.rate = rate;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

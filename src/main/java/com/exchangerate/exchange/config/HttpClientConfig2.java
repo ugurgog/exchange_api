@@ -21,7 +21,7 @@ import org.springframework.beans.factory.InitializingBean;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class HttpClientConfig implements InitializingBean {
+public abstract class HttpClientConfig2 implements InitializingBean {
 
     private HttpClient client;
     private List<BasicHeader> defaultHeaders = null;

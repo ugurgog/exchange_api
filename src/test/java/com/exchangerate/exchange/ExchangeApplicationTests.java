@@ -3,6 +3,7 @@ package com.exchangerate.exchange;
 import com.exchangerate.exchange.config.RatesProperties;
 import com.exchangerate.exchange.model.*;
 import com.exchangerate.exchange.service.*;
+import com.exchangerate.exchange.service.impl.RatesApiService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +20,7 @@ class ExchangeApiApplicationTests {
     private IRateService exchangeRateService;
 
     @Mock
-    private IHttpClient2 httpClient2;
+    private IHttpClient httpClient2;
 
     @Mock
     private RatesProperties ratesProperties;
