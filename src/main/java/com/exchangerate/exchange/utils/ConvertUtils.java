@@ -1,6 +1,7 @@
 package com.exchangerate.exchange.utils;
 
 import com.exchangerate.exchange.entity.ExchangeEntity;
+import com.exchangerate.exchange.model.CalculateRateRequestModel;
 import com.exchangerate.exchange.model.CalculateRateResponseModel;
 import com.exchangerate.exchange.model.RateListModel;
 
@@ -42,5 +43,19 @@ public class ConvertUtils {
         exEntity.setErrorCode(request.getErrorCode());
         exEntity.setErrorMessage(request.getErrorMessage());
         return exEntity;
+    }
+
+    public static CalculateRateResponseModel convertCalculateRateRequestModelToCalculateRateResponseModel(CalculateRateRequestModel request){
+
+        if (request == null){
+            return null;
+        }
+        CalculateRateResponseModel response = new CalculateRateResponseModel();
+        response.setTrxId(CustomUtils.generateTrxId());
+        response.setFromCurrency(request.getFromCurrency());
+        response.setToCurrency(request.getToCurrency());
+        response.setAmount(request.getAmount());
+        response.setDate(request.getDate());
+        return response;
     }
 }

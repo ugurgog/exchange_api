@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface IExchangeDBService {
+public interface IRateDBService {
     ExchangeEntity save(CalculateRateResponseModel request);
     ExchangeEntity update(ExchangeEntity entityRequest, CalculateRateResponseModel request);
     List<ExchangeEntity> getCalculatedRateList(String trxId, LocalDate trxDate, Pageable pageable);

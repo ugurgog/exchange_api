@@ -1,7 +1,7 @@
 package com.exchangerate.exchange.controller;
 
 import com.exchangerate.exchange.model.*;
-import com.exchangerate.exchange.service.IExchangeRateService;
+import com.exchangerate.exchange.service.IRateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,19 +12,14 @@ import org.springframework.web.servlet.view.RedirectView;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
-public class ApiController {
+public class RateController {
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    private final IExchangeRateService exchangeRateService;
+    private final IRateService rateService;
 
-    public ApiController(IExchangeRateService exchangeRateService) {
-        this.exchangeRateService = exchangeRateService;
-    }
-
-    @GetMapping("/status")
-    public String stat() {
-        return "OK";
+    public RateController(IRateService rateService) {
+        this.rateService = rateService;
     }
 
     @ApiIgnore
@@ -35,17 +30,17 @@ public class ApiController {
 
     @PostMapping("/get-rate")
     public ExchangeRateResponseModel exchangeRate(@RequestBody ExchangeRateRequestModel request) {
-        ExchangeRateResponseModel response = exchangeRateService.getRate(request);
+        ExchangeRateResponseModel response = rateService.getRate(request);
         return response;
     }
 
     @PostMapping("/calculate-rate")
     public CalculateRateResponseModel calculateRate(@RequestBody CalculateRateRequestModel request) {
-        return exchangeRateService.calculateRate(request);
+        return rateService.calculateRate(request);
     }
 
     @PostMapping("/calculate-rate/list")
     public RateListResponseModel calculateRateList(@RequestBody RateListRequestModel request) {
-        return exchangeRateService.getCalculatedList(request);
+        return rateService.getCalculatedList(request);
     }
 }

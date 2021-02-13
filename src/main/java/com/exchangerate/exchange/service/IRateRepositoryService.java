@@ -8,7 +8,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.time.LocalDate;
 
-public interface IExchangeRepositoryService extends JpaRepository<ExchangeEntity, Long>,
+public interface IRateRepositoryService extends JpaRepository<ExchangeEntity, Long>,
         PagingAndSortingRepository<ExchangeEntity, Long> {
     Page<ExchangeEntity> findByTrxId(String trxId, Pageable pageable);
     Page<ExchangeEntity> findByDate(LocalDate date, Pageable pageable);

@@ -2,21 +2,20 @@ package com.exchangerate.exchange.repository;
 
 import com.exchangerate.exchange.entity.ExchangeEntity;
 import com.exchangerate.exchange.model.CalculateRateResponseModel;
-import com.exchangerate.exchange.service.IExchangeDBService;
-import com.exchangerate.exchange.service.IExchangeRepositoryService;
+import com.exchangerate.exchange.service.IRateDBService;
+import com.exchangerate.exchange.service.IRateRepositoryService;
 import com.exchangerate.exchange.utils.ConvertUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class ExchangeDBService implements IExchangeDBService {
-    private final IExchangeRepositoryService exchangeRepositoryService;
+public class RateDBService implements IRateDBService {
+    private final IRateRepositoryService exchangeRepositoryService;
 
-    public ExchangeDBService(IExchangeRepositoryService exchangeRepositoryService) {
+    public RateDBService(IRateRepositoryService exchangeRepositoryService) {
         this.exchangeRepositoryService = exchangeRepositoryService;
     }
 

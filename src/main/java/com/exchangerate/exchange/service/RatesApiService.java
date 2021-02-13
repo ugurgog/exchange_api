@@ -6,6 +6,7 @@ import com.exchangerate.exchange.model.*;
 import com.exchangerate.exchange.utils.ConvertUtils;
 import com.exchangerate.exchange.utils.CustomUtils;
 import com.google.gson.Gson;
+import org.apache.http.client.methods.HttpGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,35 +14,32 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import static com.exchangerate.exchange.utils.CustomUtils.isNullOrEmpty;
 
 @Service
-public class RatesApiService implements IExchangeRateService {
+public class RatesApiService implements IRateService {
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final RatesProperties properties;
-    private final IHttpClient httpClient;
-    private IExchangeDBService exchangeDBService;
-
-    @Autowired
+    private final IHttpClient2 httpClient2;
+    private IRateDBService exchangeDBService;
     private Gson gson = new Gson();
 
-    public RatesApiService(IHttpClient httpClient, RatesProperties properties, IExchangeDBService exchangeDBService) {
-        this.httpClient = httpClient;
+    public RatesApiService(RatesProperties properties,
+                           IRateDBService exchangeDBService, IHttpClient2 httpClient2) {
         this.properties = properties;
         this.exchangeDBService = exchangeDBService;
+        this.httpClient2 = httpClient2;
     }
 
     @Override
@@ -61,7 +59,14 @@ public class RatesApiService implements IExchangeRateService {
         paramData += request.getFromCurrency().concat("/").concat(request.getToCurrency());
 
         try {
-            RateChannelResponseModel provResponse = httpClient.get(properties.getUrl(), paramData, RateChannelResponseModel.class);
+            Map<String, String> reqProps = new HashMap<>();
+            reqProps.put("Content-Type", "application/json");
+            reqProps.put("Accept", "*/*");
+
+            RateChannelResponseModel provResponse = httpClient2.get(properties.getUrl(),
+                    paramData, reqProps, RateChannelResponseModel.class);
+
+            //RateChannelResponseModel provResponse = httpClient.get(properties.getUrl(), paramData, RateChannelResponseModel.class);
 
             if(provResponse == null || CollectionUtils.isEmpty(provResponse.getRates())){
                 LOG.error("::getRate RateChannelResponseModel error request:{}, provResponse:{}",
@@ -123,13 +128,8 @@ public class RatesApiService implements IExchangeRateService {
 
     @Override
     public CalculateRateResponseModel calculateRate(CalculateRateRequestModel request) {
-        CalculateRateResponseModel response = new CalculateRateResponseModel();
-
-        response.setTrxId(CustomUtils.generateTrxId());
-        response.setFromCurrency(request.getFromCurrency());
-        response.setToCurrency(request.getToCurrency());
-        response.setAmount(request.getAmount());
-        response.setDate(request.getDate());
+        CalculateRateResponseModel response =
+                ConvertUtils.convertCalculateRateRequestModelToCalculateRateResponseModel(request);
 
         ExchangeEntity savedEntity = exchangeDBService.save(response);
         if (savedEntity == null) {

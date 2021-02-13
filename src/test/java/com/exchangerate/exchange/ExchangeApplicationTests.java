@@ -1,12 +1,8 @@
 package com.exchangerate.exchange;
 
 import com.exchangerate.exchange.config.RatesProperties;
-import com.exchangerate.exchange.entity.ExchangeEntity;
 import com.exchangerate.exchange.model.*;
-import com.exchangerate.exchange.service.IExchangeDBService;
-import com.exchangerate.exchange.service.IExchangeRateService;
-import com.exchangerate.exchange.service.IHttpClient;
-import com.exchangerate.exchange.service.RatesApiService;
+import com.exchangerate.exchange.service.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,16 +16,16 @@ import java.time.LocalDate;
 class ExchangeApiApplicationTests {
 
     @Mock
-    private IExchangeRateService exchangeRateService;
+    private IRateService exchangeRateService;
 
     @Mock
-    private IHttpClient httpClient;
+    private IHttpClient2 httpClient2;
 
     @Mock
     private RatesProperties ratesProperties;
 
     @Mock
-    private IExchangeDBService exchangeDBService;
+    private IRateDBService exchangeDBService;
 
     @Test
     void testGetRateCase(){
@@ -47,7 +43,8 @@ class ExchangeApiApplicationTests {
 
     @Test
     void testRateNotFoundCase(){
-        IExchangeRateService exchangeRateService = new RatesApiService(httpClient,ratesProperties, exchangeDBService);
+        IRateService exchangeRateService = new RatesApiService(ratesProperties, exchangeDBService,
+                httpClient2);
 
         ExchangeRateRequestModel request = new ExchangeRateRequestModel();
         request.setFromCurrency("EUR");
