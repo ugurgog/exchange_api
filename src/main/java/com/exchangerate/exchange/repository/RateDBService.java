@@ -37,10 +37,12 @@ public class RateDBService implements IRateDBService {
     }
 
     @Override
-    public List<ExchangeEntity> getCalculatedRateList(String trxId, LocalDate date, Pageable pageable) {
-        if(trxId == null || trxId.trim().length() == 0)
-            return exchangeRepositoryService.findByDate(date, pageable).getContent();
-        else
-            return exchangeRepositoryService.findByTrxId(trxId, pageable).getContent();
+    public List<ExchangeEntity> getRateListByTrxId(String trxId, Pageable pageable) {
+        return exchangeRepositoryService.findByTrxId(trxId, pageable).getContent();
+    }
+
+    @Override
+    public List<ExchangeEntity> getRateListByTrxDate(LocalDate date, Pageable pageable) {
+        return exchangeRepositoryService.findByDate(date, pageable).getContent();
     }
 }

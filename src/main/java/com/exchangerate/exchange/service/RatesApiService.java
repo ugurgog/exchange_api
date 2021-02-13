@@ -6,10 +6,8 @@ import com.exchangerate.exchange.model.*;
 import com.exchangerate.exchange.utils.ConvertUtils;
 import com.exchangerate.exchange.utils.CustomUtils;
 import com.google.gson.Gson;
-import org.apache.http.client.methods.HttpGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -93,6 +91,7 @@ public class RatesApiService implements IRateService {
     @Override
     public RateListResponseModel getCalculatedList(RateListRequestModel request) {
         RateListResponseModel response = new RateListResponseModel();
+        List<ExchangeEntity> exchangeEntityList;
 
         if(request == null || (request.getSize() <= 0)){
             response.setErrorCode("INVALID_REQUEST");
@@ -107,7 +106,11 @@ public class RatesApiService implements IRateService {
         }
 
         Pageable paging = PageRequest.of(request.getPage(), request.getSize());
-        List<ExchangeEntity> exchangeEntityList = exchangeDBService.getCalculatedRateList(request.getTrxId(),request.getTrxDate(),paging);
+
+        if(!CustomUtils.isNullOrEmpty(request.getTrxId()))
+            exchangeEntityList = exchangeDBService.getRateListByTrxId(request.getTrxId(),paging);
+        else
+            exchangeEntityList = exchangeDBService.getRateListByTrxDate(request.getTrxDate(),paging);
 
         if(!CollectionUtils.isEmpty(exchangeEntityList)){
             response.setTrxList(new ArrayList<>());

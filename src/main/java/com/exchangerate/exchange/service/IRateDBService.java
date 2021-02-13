@@ -10,5 +10,6 @@ import java.util.List;
 public interface IRateDBService {
     ExchangeEntity save(CalculateRateResponseModel request);
     ExchangeEntity update(ExchangeEntity entityRequest, CalculateRateResponseModel request);
-    List<ExchangeEntity> getCalculatedRateList(String trxId, LocalDate trxDate, Pageable pageable);
+    List<ExchangeEntity> getRateListByTrxId(String trxId, Pageable pageable);
+    List<ExchangeEntity> getRateListByTrxDate(LocalDate trxDate, Pageable pageable);
 }
