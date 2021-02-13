@@ -57,17 +57,11 @@ public class RatesApiService implements IExchangeRateService {
             return response;
         }
 
-        String paramData = "";
-        if (request.getDate() == null) {
-            paramData = "latest";
-        } else {
-            paramData = dateTimeFormatter.format(request.getDate()) + "/";
-        }
-
-        paramData += request.getFromCurrency() + "/" + request.getToCurrency();
+        String paramData = request.getDate() == null ? "latest" : dateTimeFormatter.format(request.getDate()).concat("/");
+        paramData += request.getFromCurrency().concat("/").concat(request.getToCurrency());
 
         try {
-            RateChannelResponseModel provResponse = httpClient.get(properties.getUrl(), paramData, ProtocolEnum.Rate_SymbolAndBase, RateChannelResponseModel.class);
+            RateChannelResponseModel provResponse = httpClient.get(properties.getUrl(), paramData, RateChannelResponseModel.class);
 
             if(provResponse == null || CollectionUtils.isEmpty(provResponse.getRates())){
                 LOG.error("::getRate RateChannelResponseModel error request:{}, provResponse:{}",

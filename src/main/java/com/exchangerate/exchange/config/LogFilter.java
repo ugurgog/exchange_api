@@ -1,6 +1,5 @@
 package com.exchangerate.exchange.config;
 
-import com.exchangerate.exchange.constants.ProjectConstants;
 import com.exchangerate.exchange.utils.CustomUtils;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ public class LogFilter extends GenericFilter {
         String client = CustomUtils.getCurrentUserIP(request);
         String pathInfo = request.getRequestURI();
         String trxId = UUID.randomUUID().toString();
-        MDC.put(ProjectConstants.TRX_KEY, trxId);
+        MDC.put("trxId", trxId);
 
         long stime = System.currentTimeMillis();
         Throwable exception = null;

@@ -4,6 +4,7 @@ import com.exchangerate.exchange.entity.ExchangeEntity;
 import com.exchangerate.exchange.model.CalculateRateResponseModel;
 import com.exchangerate.exchange.service.IExchangeDBService;
 import com.exchangerate.exchange.service.IExchangeRepositoryService;
+import com.exchangerate.exchange.utils.ConvertUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -21,18 +22,7 @@ public class ExchangeDBService implements IExchangeDBService {
 
     @Override
     public ExchangeEntity save(CalculateRateResponseModel request) {
-        ExchangeEntity exEntity = new ExchangeEntity();
-        exEntity.setDate(request.getDate());
-        exEntity.setAmount(request.getAmount());
-        exEntity.setRate(request.getRate());
-        exEntity.setFromCurrency(request.getFromCurrency());
-        exEntity.setToCurrency( request.getToCurrency());
-        exEntity.setCalculatedAmount(request.getCalculateAmount());
-        exEntity.setTrxId(request.getTrxId());
-        exEntity.setTrxDateTime(LocalDateTime.now());
-        exEntity.setSuccess(request.isSuccess());
-        exEntity.setErrorCode(request.getErrorCode());
-        exEntity.setErrorMessage(request.getErrorMessage());
+        ExchangeEntity exEntity = ConvertUtils.convertCalculateRateResponseModelToExchangeEntity(request);
         ExchangeEntity response = exchangeRepositoryService.save(exEntity);
         return response;
     }

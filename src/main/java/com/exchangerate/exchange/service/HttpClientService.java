@@ -1,7 +1,6 @@
 package com.exchangerate.exchange.service;
 
 import com.exchangerate.exchange.config.HttpClientConfig;
-import com.exchangerate.exchange.model.ProtocolEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,8 +23,8 @@ public class HttpClientService extends HttpClientConfig implements IHttpClient {
     }
 
     @Override
-    public <T> T get(String url, String data, ProtocolEnum service, Class<T> clazz) {
-        String params = processedUrl(service, data);
+    public <T> T get(String url, String data, Class<T> clazz) {
+        String params = processedUrl(data);
         if (params != null && params.length() > 0) {
             url = url + params;
         }
@@ -44,18 +43,14 @@ public class HttpClientService extends HttpClientConfig implements IHttpClient {
 
                 if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
                     result = EntityUtils.toString(entity, "UTF-8");
-
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("::get service:{} url:{} returnJson:{} ", service, url, result);
-                    }
+                    LOG.info("::get url:{} returnJson:{} ", url, result);
                 } else {
                     String content = null;
                     if (entity != null)
                         content = EntityUtils.toString(entity);
 
                     int httpErrorCode = statusLine.getStatusCode();
-                    LOG.error("::get Error service:{} url:{}  content:{} status:{}", service, url, content, httpErrorCode);
-
+                    LOG.error("::get Error url:{}  content:{} status:{}", url, content, httpErrorCode);
                 }
             } catch (Exception e) {
                 LOG.error("::get  ", e);
@@ -70,20 +65,18 @@ public class HttpClientService extends HttpClientConfig implements IHttpClient {
         return null;
     }
 
-    private String processedUrl(ProtocolEnum service, String data) {
+    private String processedUrl(String data) {
         if (data == null && data.length() > 0) {
             return null;
         }
         StringBuilder buf = new StringBuilder();
-        String newParams = service.getPath();
-        if (service.isUsePath()) {
-            String[] path = data.split("/");
-            for (int i = 0; i < path.length; i++) {
-                newParams = newParams.replace("{" + (i + 1) + "}", path[i]);
-            }
-        } else {
-            newParams = service.getPath();
+        String newParams = "{1}?base={2}&symbols={3}";
+
+        String[] path = data.split("/");
+        for (int i = 0; i < path.length; i++) {
+            newParams = newParams.replace("{" + (i + 1) + "}", path[i]);
         }
+
         buf.append(newParams);
         return buf.toString();
     }

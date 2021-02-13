@@ -1,6 +1,5 @@
 package com.exchangerate.exchange.config;
 
-import com.exchangerate.exchange.constants.ProjectConstants;
 import org.apache.http.Header;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -26,10 +25,11 @@ public abstract class HttpClientConfig implements InitializingBean {
 
     private HttpClient client;
     private List<BasicHeader> defaultHeaders = null;
+    private static final int HTTP_TIMEOUT = 1000;
 
-    private int requestTimeout = 60 * ProjectConstants.HTTP_TIMEOUT; // 60 sn.
-    private int connectionTimeout = 10 * ProjectConstants.HTTP_TIMEOUT; // 10 sn
-    private int socketTimeout = 60 * ProjectConstants.HTTP_TIMEOUT; // 60 sn
+    private int requestTimeout = 60 * HTTP_TIMEOUT; // 60 sn.
+    private int connectionTimeout = 10 * HTTP_TIMEOUT; // 10 sn
+    private int socketTimeout = 60 * HTTP_TIMEOUT; // 60 sn
 
     @Override
     public void afterPropertiesSet() throws Exception {
