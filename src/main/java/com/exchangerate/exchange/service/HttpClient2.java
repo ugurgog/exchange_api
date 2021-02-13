@@ -229,7 +229,6 @@ public class HttpClient2 implements IHttpClient2{
                 url = url + data;
             }
 
-            //url = url.concat(params);
             HttpGet get = new HttpGet(url);
             setHeaderProperties(get, reqProps);
             CloseableHttpResponse response = client.execute(get);
