@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class HttpClientService implements IHttpClient {
+public class HttpClient implements IHttpClient {
 
     private Gson gson = new Gson();
     private final Logger LOG = LoggerFactory.getLogger(getClass());
@@ -67,7 +67,7 @@ public class HttpClientService implements IHttpClient {
 
     private boolean enableCompression = true;
 
-    public HttpClientService() {
+    public HttpClient() {
     }
 
     @Override

@@ -33,7 +33,6 @@ import static com.exchangerate.exchange.utils.CustomUtils.isNullOrEmpty;
 public class RatesApiService implements IRateService {
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final RatesProperties properties;
 
     private final IRateDBService exchangeDBService;
@@ -51,26 +50,14 @@ public class RatesApiService implements IRateService {
     public ExchangeRateResponseModel getRate(ExchangeRateRequestModel request) {
         ExchangeRateResponseModel response = new ExchangeRateResponseModel();
 
-        LOG.info("::getRate request:{}", gson.toJson(request));
-
-        if(isNullOrEmpty(request.getFromCurrency()) || isNullOrEmpty(request.getToCurrency())){
-            LOG.error("::getRate invalid request request:{}", gson.toJson(request));
-            response.setErrorCode("INVALID_REQUEST");
-            response.setErrorMessage("From currency or To currency value is invalid!");
-            return response;
-        }
-
-        String paramData = request.getDate() == null ? "latest" : dateTimeFormatter.format(request.getDate()).concat("/");
-        paramData += properties.getKey().concat("/");
-        paramData += request.getFromCurrency().concat("/").concat(request.getToCurrency());
-
         try {
             Map<String, String> reqProps = new HashMap<>();
             reqProps.put("Content-Type", "application/json");
             reqProps.put("Accept", "*/*");
 
             RateChannelResponseModel provResponse = httpClient.get(properties.getUrl(),
-                    paramData, reqProps, RateChannelResponseModel.class);
+                    CustomUtils.getRateServiceParams(request, properties.getKey()),
+                    reqProps, RateChannelResponseModel.class);
 
             if(provResponse == null || CollectionUtils.isEmpty(provResponse.getRates())){
                 LOG.error("::getRate RateChannelResponseModel error request:{}, provResponse:{}",
@@ -101,18 +88,6 @@ public class RatesApiService implements IRateService {
         RateListResponseModel response = new RateListResponseModel();
         List<ExchangeEntity> exchangeEntityList;
 
-        if(request == null || (request.getSize() <= 0)){
-            response.setErrorCode("INVALID_REQUEST");
-            response.setErrorMessage("Request model is not valid!");
-            return response;
-        }
-
-        if(request.getTrxDate() == null && CustomUtils.isNullOrEmpty(request.getTrxId())){
-            response.setErrorCode("INVALID_REQUEST");
-            response.setErrorMessage("Transaction date and Transaction id cannot be null!");
-            return response;
-        }
-
         Pageable paging = PageRequest.of(request.getPage(), request.getSize());
 
         if(!CustomUtils.isNullOrEmpty(request.getTrxId()))
@@ -125,13 +100,13 @@ public class RatesApiService implements IRateService {
             for(ExchangeEntity exchangeEntity : exchangeEntityList){
                 response.getTrxList().add(ConvertUtils.convertExchangeEntityToRateListModel(exchangeEntity));
             }
-            response.setSuccess(true);
         }else{
             response.setErrorCode("NO_CONTENT");
             response.setErrorMessage("Calculated rate list is empty!");
             return response;
         }
 
+        response.setSuccess(true);
         return response;
     }
 
@@ -156,7 +131,7 @@ public class RatesApiService implements IRateService {
         exRequest.setToCurrency(request.getToCurrency());
 
         ExchangeRateResponseModel exchangeRateResponseModel = getRate(exRequest);
-        if (!exchangeRateResponseModel.isSuccess()) {
+        if (exchangeRateResponseModel == null || !exchangeRateResponseModel.isSuccess()) {
             LOG.error("::calculateRate rate not found req:{} exRate:{}", gson.toJson(request), gson.toJson(exchangeRateResponseModel));
             response.setErrorCode(exchangeRateResponseModel.getErrorCode());
             response.setErrorMessage(exchangeRateResponseModel.getErrorMessage());
